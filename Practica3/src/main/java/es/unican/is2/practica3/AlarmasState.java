@@ -28,7 +28,5 @@ public abstract class AlarmasState {
 	public static AlarmasState getEstadoSonando() {
 		return estadoSonando;
 	};
-	
-	
 
 }
