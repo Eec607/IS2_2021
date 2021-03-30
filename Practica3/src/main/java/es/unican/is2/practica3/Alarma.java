@@ -2,7 +2,7 @@ package es.unican.is2.practica3;
 
 import java.util.Date;
 
-public class Alarma {
+public class Alarma implements Comparable<Alarma> {
 	private String id;
 	private Date hora;
 	
@@ -18,4 +18,9 @@ public class Alarma {
 	public Date getHora() {
 		return hora;
 	}
+
+	public int compareTo(Alarma a) {
+		return hora.compareTo(a.getHora());
+	}
+	
 }

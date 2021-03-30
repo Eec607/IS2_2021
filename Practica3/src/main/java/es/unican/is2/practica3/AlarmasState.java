@@ -8,11 +8,14 @@ public abstract class AlarmasState {
 	private static Programado estadoProgramado = new Programado();
 	private static Sonando estadoSonando = new Sonando();
 	
+	
 	public static AlarmasState init(Alarmas context) {
 		estadoDesprogramado.entryAction(context);
 		return estadoDesprogramado;
 	}
-	
+	public void entryAction(Alarmas context) {};
+	public void exitAction(Alarmas context) {};
+	public void doAction(Alarmas context) {};
 	public void alarmaOn(Alarmas context, String id) {};
 	public void alarmaOff(Alarmas context, String id) {};
 	public void nuevaAlarma(Alarmas context, String id, Date hora) {};
