@@ -23,4 +23,9 @@ public class Alarma implements Comparable<Alarma> {
 		return hora.compareTo(a.getHora());
 	}
 	
+	@Override
+	public String toString() {
+		return "Id : " + id + ", Hora : " + hora;
+	}
+	
 }

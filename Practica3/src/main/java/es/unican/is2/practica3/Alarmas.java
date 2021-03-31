@@ -107,7 +107,7 @@ public class Alarmas {
 	 * @return
 	 */
 	public Alarma[] alarmasDesactivadas() {
-		return (Alarma[]) alarmasDesactivadas.values().toArray();
+		return alarmasDesactivadas.values().toArray(new Alarma[0]);
 	}
 	
 	/**
@@ -170,5 +170,13 @@ public class Alarmas {
 	 */
 	public void apagar() {
 		state.apagar(this);
+	}
+	
+	public String toString() {
+		String string = "";
+		for (Map.Entry<String, Alarma> entry : alarmasSistema.entrySet()) {
+	        string += entry.getValue() + "\n";
+	    }
+		return string;
 	}
 }
