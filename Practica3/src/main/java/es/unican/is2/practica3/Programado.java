@@ -9,8 +9,7 @@ public class Programado extends AlarmasState {
 	}
 	
 	public void nuevaAlarma (Alarmas context, String id, Date hora) {
-		boolean anhadida = context.anhadeAlarma(id, hora);
-		if (anhadida) System.out.println("!");
+		context.anhadeAlarma(id, hora);
 	}
 	
 	public void alarmaOn (Alarmas context, String id) {

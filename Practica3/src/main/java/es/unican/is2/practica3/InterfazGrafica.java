@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
 
 public class InterfazGrafica {
 
@@ -27,6 +29,10 @@ public class InterfazGrafica {
 	private JSpinner spinnerHora;
 	private Alarmas alarmas;
 	private AlarmasState alarmasState;
+	private JList<String> alarmasDesactivadas;
+	private DefaultListModel<String> modeloDesactivadas;
+	private JList<String> alarmasActivadas;
+	private DefaultListModel<String> modeloActivadas;
 
 	/**
 	 * Launch the application.
@@ -54,20 +60,34 @@ public class InterfazGrafica {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 430);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		alarmas = new Alarmas();
+		modeloDesactivadas = new DefaultListModel<String>();
+		modeloActivadas = new DefaultListModel<String>();
+		
+		alarmasDesactivadas = new JList<String>();
+		alarmasDesactivadas.setBounds(267, 188, 140, 125);
+		frame.getContentPane().add(alarmasDesactivadas);
+		
+		alarmasActivadas = new JList<String>();
+		alarmasActivadas.setBounds(267, 47, 140, 118);
+		frame.getContentPane().add(alarmasActivadas);
 		
 		JButton btnNueva = new JButton("Nueva Alarma");
-		btnNueva.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+		btnNueva.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				String id = fieldId.getText();
 				Date hora = (Date) spinnerHora.getValue();
 				alarmas.nuevaAlarma(id, hora);
+				if (!(modeloDesactivadas.contains(id) || modeloActivadas.contains(id))) {
+					modeloDesactivadas.addElement(id);
+					alarmasDesactivadas.setModel(modeloDesactivadas);
+				}
 			}
 		});
 		btnNueva.setBounds(21, 115, 148, 23);
@@ -77,6 +97,9 @@ public class InterfazGrafica {
 		btnApagar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (alarmas.sonando()) {
+					alarmas.controlador().cancel();
+				}
 			}
 		});
 		btnApagar.setBounds(39, 149, 112, 40);
@@ -86,6 +109,12 @@ public class InterfazGrafica {
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				String idAlarma = alarmasDesactivadas.getSelectedValue();
+				if (!modeloActivadas.contains(idAlarma)) {
+					alarmas.eliminaAlarma(idAlarma);
+					modeloDesactivadas.removeElement(idAlarma);
+					alarmasDesactivadas.setModel(modeloDesactivadas);
+				}
 			}
 		});
 		btnEliminar.setBounds(267, 357, 140, 23);
@@ -95,6 +124,14 @@ public class InterfazGrafica {
 		btnOn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				String idAlarma = alarmasDesactivadas.getSelectedValue();
+				if (!modeloActivadas.contains(idAlarma)) {
+					alarmas.alarmaOn(idAlarma);
+					modeloActivadas.addElement(idAlarma);
+					modeloDesactivadas.removeElement(idAlarma);
+					alarmasActivadas.setModel(modeloActivadas);
+					alarmasDesactivadas.setModel(modeloDesactivadas);
+				}
 			}
 		});
 		btnOn.setBounds(267, 323, 58, 23);
@@ -104,6 +141,14 @@ public class InterfazGrafica {
 		btnOff.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				String idAlarma = alarmasActivadas.getSelectedValue();
+				if (!modeloDesactivadas.contains(idAlarma)) {
+					alarmas.alarmaOff(idAlarma);
+					modeloDesactivadas.addElement(idAlarma);
+					modeloActivadas.removeElement(idAlarma);
+					alarmasDesactivadas.setModel(modeloDesactivadas);
+					alarmasActivadas.setModel(modeloActivadas);
+				}
 			}
 		});
 		btnOff.setBounds(349, 323, 58, 23);
@@ -122,10 +167,6 @@ public class InterfazGrafica {
 		frame.getContentPane().add(fieldId);
 		fieldId.setColumns(10);
 		
-		JTextPane panelDesactivadas = new JTextPane();
-		panelDesactivadas.setBounds(267, 189, 140, 123);
-		frame.getContentPane().add(panelDesactivadas);
-		
 		JLabel lblDesactivadas = new JLabel("Alarmas desactivadas");
 		lblDesactivadas.setBounds(274, 174, 133, 14);
 		frame.getContentPane().add(lblDesactivadas);
@@ -134,17 +175,13 @@ public class InterfazGrafica {
 		lblActivadas.setBounds(274, 33, 118, 14);
 		frame.getContentPane().add(lblActivadas);
 		
-		JTextPane panelActivadas = new JTextPane();
-		panelActivadas.setBounds(267, 46, 140, 117);
-		frame.getContentPane().add(panelActivadas);
-		
 		spinnerHora = new JSpinner();
 		spinnerHora.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY));
 		spinnerHora.setEditor(new JSpinner.DateEditor(spinnerHora, "HH:mm"));
 		spinnerHora.setBounds(89, 87, 80, 20);
 		frame.getContentPane().add(spinnerHora);
 		
-		JButton btnNewButton = new JButton("New button");
+		JButton btnNewButton = new JButton("alarmas");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

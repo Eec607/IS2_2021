@@ -2,6 +2,7 @@ package es.unican.is2.practica3;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -12,7 +13,9 @@ public class Alarmas {
 	private Map<String, Alarma> alarmasSistema = new HashMap<String, Alarma>();
 	private PriorityQueue<Alarma> alarmasActivadas = new PriorityQueue<Alarma>();
 	private Map<String, Alarma> alarmasDesactivadas = new HashMap<String, Alarma>();
-	public TimedStateController controlador = new TimedStateController();
+	private TimedStateController controlador = new TimedStateController();
+	private boolean sonando = false;
+	
 	
 	public Alarmas() {
 		state = AlarmasState.init(this);
@@ -31,6 +34,14 @@ public class Alarmas {
 		return INTERVALO_SONAR;
 	}
 	
+	public TimedStateController controlador() {
+		return controlador;
+	}
+	
+	public boolean sonando() {
+		return sonando;
+	}
+
 	/**
 	 * 
 	 * @param id
@@ -114,6 +125,7 @@ public class Alarmas {
 	 * 
 	 */
 	public void activarMelodia() {
+		sonando = true;
 		System.out.println("Método activarMelodia() llamado");
 	}
 	
@@ -121,6 +133,7 @@ public class Alarmas {
 	 * 
 	 */
 	public void desactivarMelodia() {
+		sonando = false;
 		System.out.println("Método desactivarMelodia() llamado");
 	}
 	
@@ -170,6 +183,27 @@ public class Alarmas {
 	 */
 	public void apagar() {
 		state.apagar(this);
+	}
+	
+	public String[] idsActivadas() {
+		String[] ids = {};
+		int i = 0;
+		Iterator<Alarma> iter = alarmasActivadas.iterator();
+		while (iter.hasNext()) {
+			ids[i] = iter.next().getId();
+			++i;
+	    }
+		return ids;
+	}
+	
+	public String[] idsDesactivadas() {
+		String[] ids = {};
+		int i = 0;
+		for (Map.Entry<String, Alarma> entry : alarmasDesactivadas.entrySet()) {
+			ids[i] = entry.getValue().getId();
+			++i;
+	    }
+		return ids;
 	}
 	
 	public String toString() {
