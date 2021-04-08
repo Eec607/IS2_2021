@@ -4,12 +4,10 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import java.util.Date;
@@ -17,9 +15,6 @@ import java.util.Calendar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JList;
-import javax.swing.JTextArea;
-import javax.swing.JPanel;
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 
 public class InterfazGrafica {
@@ -28,7 +23,6 @@ public class InterfazGrafica {
 	private JTextField fieldId;
 	private JSpinner spinnerHora;
 	private Alarmas alarmas;
-	private AlarmasState alarmasState;
 	private JList<String> alarmasDesactivadas;
 	private DefaultListModel<String> modeloDesactivadas;
 	private JList<String> alarmasActivadas;
@@ -60,7 +54,6 @@ public class InterfazGrafica {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 430);
@@ -98,7 +91,7 @@ public class InterfazGrafica {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (alarmas.sonando()) {
-					alarmas.controlador().cancel();
+					AlarmasState.getEstadoSonando().getTimerMelodia().cancel();
 				}
 			}
 		});
@@ -188,7 +181,17 @@ public class InterfazGrafica {
 				System.out.println(alarmas.toString());
 			}
 		});
-		btnNewButton.setBounds(80, 304, 89, 23);
+		btnNewButton.setBounds(69, 269, 89, 23);
 		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnNewButton2 = new JButton("activadas");
+		btnNewButton2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println(alarmas.toStringActivadas());
+			}
+		});
+		btnNewButton2.setBounds(69, 303, 89, 23);
+		frame.getContentPane().add(btnNewButton2);
 	}
 }

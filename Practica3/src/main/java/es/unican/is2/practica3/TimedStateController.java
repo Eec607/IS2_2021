@@ -1,20 +1,26 @@
 package es.unican.is2.practica3;
 
 import java.util.Date;
+import java.util.Timer;
 
 public class TimedStateController {
-	boolean parar = false;
+	private static TimedStateController cont;
+	private static Timer timer;
+	
+	private TimedStateController() {
+		timer = new Timer();
+	}
 	
 	public static TimedStateController getInstance() {
-		return null;
+		if (cont == null) {
+			cont = new TimedStateController();
+        }
+        return cont;
 	}
 	
 	public void startRelative(Alarmas context, TimedState estado, int tiempo) {
-		int counter = 0;
 		context.activarMelodia();
-		while(!parar || counter < tiempo) {
-			xD
-		}
+		timer.schedule(null, 0);
 		context.desactivarMelodia();	
 	}
 	
@@ -23,6 +29,6 @@ public class TimedStateController {
 	}
 	
 	public void cancel() {
-		parar = true;
+		timer.cancel();
 	}
 }

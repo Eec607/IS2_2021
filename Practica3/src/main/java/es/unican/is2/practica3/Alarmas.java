@@ -1,5 +1,6 @@
 package es.unican.is2.practica3;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,6 @@ public class Alarmas {
 	private Map<String, Alarma> alarmasSistema = new HashMap<String, Alarma>();
 	private PriorityQueue<Alarma> alarmasActivadas = new PriorityQueue<Alarma>();
 	private Map<String, Alarma> alarmasDesactivadas = new HashMap<String, Alarma>();
-	private TimedStateController controlador = new TimedStateController();
 	private boolean sonando = false;
 	
 	
@@ -34,10 +34,6 @@ public class Alarmas {
 		return INTERVALO_SONAR;
 	}
 	
-	public TimedStateController controlador() {
-		return controlador;
-	}
-	
 	public boolean sonando() {
 		return sonando;
 	}
@@ -53,7 +49,7 @@ public class Alarmas {
 			return false;
 		}
 		
-		Alarma nuevaAlarma = new Alarma(id, hora);
+		Alarma nuevaAlarma = new Alarma(id, actualizaDate(hora));
 		alarmasSistema.put(id, nuevaAlarma);
 		alarmasDesactivadas.put(id, nuevaAlarma);
 		return true;
@@ -70,7 +66,7 @@ public class Alarmas {
 		}
 		
 		Alarma alarmaEliminada = alarmasSistema.remove(id);
-		if (!alarmasDesactivadas.containsKey(id)) {
+		if (alarmasDesactivadas.containsKey(id)) {
 			alarmasDesactivadas.remove(id);
 			return true;
 		}
@@ -185,25 +181,26 @@ public class Alarmas {
 		state.apagar(this);
 	}
 	
-	public String[] idsActivadas() {
-		String[] ids = {};
-		int i = 0;
-		Iterator<Alarma> iter = alarmasActivadas.iterator();
-		while (iter.hasNext()) {
-			ids[i] = iter.next().getId();
-			++i;
-	    }
-		return ids;
+	/**
+	 * 
+	 * @param hora
+	 * @return
+	 */
+	private Date actualizaDate(Date hora) {
+		Date dateActualizada = Calendar.getInstance().getTime();
+		dateActualizada.setHours(hora.getHours());
+		dateActualizada.setMinutes(hora.getMinutes());
+		dateActualizada.setSeconds(0);
+		return dateActualizada;
 	}
 	
-	public String[] idsDesactivadas() {
-		String[] ids = {};
-		int i = 0;
-		for (Map.Entry<String, Alarma> entry : alarmasDesactivadas.entrySet()) {
-			ids[i] = entry.getValue().getId();
-			++i;
+	public String toStringActivadas() {
+		String string = "";
+		Iterator<Alarma> iter = alarmasActivadas.iterator();
+		while (iter.hasNext()) {
+	        string += iter.next().getId() + "\n";
 	    }
-		return ids;
+		return string;
 	}
 	
 	public String toString() {

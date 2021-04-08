@@ -22,13 +22,13 @@ public abstract class AlarmasState {
 	public void borraAlarma(Alarmas context, String id) {};
 	public void apagar(Alarmas context) {};
 	
-	public static AlarmasState getEstadoDesprogramado() {
+	public static Desprogramado getEstadoDesprogramado() {
 		return estadoDesprogramado;
 	};
-	public static AlarmasState getEstadoProgramado() {
+	public static Programado getEstadoProgramado() {
 		return estadoProgramado;
 	};
-	public static AlarmasState getEstadoSonando() {
+	public static Sonando getEstadoSonando() {
 		return estadoSonando;
 	};
 
