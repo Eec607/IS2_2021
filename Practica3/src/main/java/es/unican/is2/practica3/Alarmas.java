@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 
 public class Alarmas {
 	
-	private static final int INTERVALO_SONAR = 10;
+	protected static final int INTERVALO_SONAR = 10000;
 	private AlarmasState state;
 	private Map<String, Alarma> alarmasSistema = new HashMap<String, Alarma>();
 	private PriorityQueue<Alarma> alarmasActivadas = new PriorityQueue<Alarma>();
@@ -51,7 +51,7 @@ public class Alarmas {
 		
 		Alarma nuevaAlarma = new Alarma(id, actualizaDate(hora));
 		alarmasSistema.put(id, nuevaAlarma);
-		alarmasDesactivadas.put(id, nuevaAlarma);
+		alarmasActivadas.add(nuevaAlarma);
 		return true;
 	}
 	
@@ -186,6 +186,7 @@ public class Alarmas {
 	 * @param hora
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private Date actualizaDate(Date hora) {
 		Date dateActualizada = Calendar.getInstance().getTime();
 		dateActualizada.setHours(hora.getHours());

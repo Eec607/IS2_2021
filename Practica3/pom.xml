@@ -3,4 +3,21 @@
   <groupId>es.unican.is2</groupId>
   <artifactId>practica3</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<version>3.2.0</version>
+			<configuration>
+				<archive>
+					<manifest>
+						<mainClass> es.unican.is2.practica3.InterfazGrafica </mainClass>
+					</manifest>
+				</archive>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
 </project>

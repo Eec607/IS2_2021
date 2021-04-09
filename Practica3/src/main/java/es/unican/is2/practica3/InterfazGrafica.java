@@ -77,9 +77,9 @@ public class InterfazGrafica {
 				String id = fieldId.getText();
 				Date hora = (Date) spinnerHora.getValue();
 				alarmas.nuevaAlarma(id, hora);
-				if (!(modeloDesactivadas.contains(id) || modeloActivadas.contains(id))) {
-					modeloDesactivadas.addElement(id);
-					alarmasDesactivadas.setModel(modeloDesactivadas);
+				if (!(modeloActivadas.contains(id) || modeloDesactivadas.contains(id))) {
+					modeloActivadas.addElement(id);
+					alarmasActivadas.setModel(modeloActivadas);
 				}
 			}
 		});
@@ -91,7 +91,7 @@ public class InterfazGrafica {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (alarmas.sonando()) {
-					AlarmasState.getEstadoSonando().getTimerMelodia().cancel();
+					AlarmasState.getEstadoSonando().apagar(alarmas);
 				}
 			}
 		});
@@ -173,25 +173,5 @@ public class InterfazGrafica {
 		spinnerHora.setEditor(new JSpinner.DateEditor(spinnerHora, "HH:mm"));
 		spinnerHora.setBounds(89, 87, 80, 20);
 		frame.getContentPane().add(spinnerHora);
-		
-		JButton btnNewButton = new JButton("alarmas");
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println(alarmas.toString());
-			}
-		});
-		btnNewButton.setBounds(69, 269, 89, 23);
-		frame.getContentPane().add(btnNewButton);
-		
-		JButton btnNewButton2 = new JButton("activadas");
-		btnNewButton2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println(alarmas.toStringActivadas());
-			}
-		});
-		btnNewButton2.setBounds(69, 303, 89, 23);
-		frame.getContentPane().add(btnNewButton2);
 	}
 }
