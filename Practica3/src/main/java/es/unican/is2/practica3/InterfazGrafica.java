@@ -74,9 +74,14 @@ public class InterfazGrafica {
 		JButton btnNueva = new JButton("Nueva Alarma");
 		btnNueva.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Al pulsar el boton, se toman los valores introducidos en los campos id y hora
+				// para crear una nueva alarma
 				String id = fieldId.getText();
 				Date hora = (Date) spinnerHora.getValue();
 				alarmas.nuevaAlarma(id, hora);
+				
+				// Si la alarma creada no se encuentra ya en la lista de activadas, se anhade al 
+				// modelo de dicha lista y se refresca para que los cambios se vean en la gui
 				if (!(modeloActivadas.contains(id) || modeloDesactivadas.contains(id))) {
 					modeloActivadas.addElement(id);
 					alarmasActivadas.setModel(modeloActivadas);
@@ -90,6 +95,7 @@ public class InterfazGrafica {
 		btnApagar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// Si al pulsar el boton una alarma se encuentra sonando, se apaga inmediatamente
 				if (alarmas.sonando()) {
 					AlarmasState.getEstadoSonando().apagar(alarmas);
 				}
@@ -102,7 +108,10 @@ public class InterfazGrafica {
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// Al pulsar el boton, se toma la alarma resaltada en la lista de alarmas desactivadas
 				String idAlarma = alarmasDesactivadas.getSelectedValue();
+				
+				// Control de errores: No permite eliminar una alarma que no este previamente desactivada
 				if (!modeloActivadas.contains(idAlarma)) {
 					alarmas.eliminaAlarma(idAlarma);
 					modeloDesactivadas.removeElement(idAlarma);
@@ -118,6 +127,8 @@ public class InterfazGrafica {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String idAlarma = alarmasDesactivadas.getSelectedValue();
+				
+				// Control de errores: No permite activar alarmas que se encuentren ya en la lista de activadas
 				if (!modeloActivadas.contains(idAlarma)) {
 					alarmas.alarmaOn(idAlarma);
 					modeloActivadas.addElement(idAlarma);
@@ -135,6 +146,8 @@ public class InterfazGrafica {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String idAlarma = alarmasActivadas.getSelectedValue();
+				
+				// Control de errores: No permite desactivar alarmas que se encuentren ya en la lista de desactivadas
 				if (!modeloDesactivadas.contains(idAlarma)) {
 					alarmas.alarmaOff(idAlarma);
 					modeloDesactivadas.addElement(idAlarma);
@@ -168,9 +181,11 @@ public class InterfazGrafica {
 		lblActivadas.setBounds(274, 33, 118, 14);
 		frame.getContentPane().add(lblActivadas);
 		
+		// Se modifica el formato del JSpinner para que solo muestre horas y minutos
 		spinnerHora = new JSpinner();
 		spinnerHora.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY));
 		spinnerHora.setEditor(new JSpinner.DateEditor(spinnerHora, "HH:mm"));
+		
 		spinnerHora.setBounds(89, 87, 80, 20);
 		frame.getContentPane().add(spinnerHora);
 	}

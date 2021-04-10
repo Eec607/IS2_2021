@@ -19,6 +19,10 @@ public class Alarma implements Comparable<Alarma> {
 		return hora;
 	}
 
+	/**
+	 * Redefinición del método compareTo para que las alarmas se ordenen en la cola de prioridad en base a su hora 
+	 * (cuanto más próxima al instante actual, más cercana estará la alarma a la cabeza de la cola)
+	 */
 	public int compareTo(Alarma a) {
 		return hora.compareTo(a.getHora());
 	}

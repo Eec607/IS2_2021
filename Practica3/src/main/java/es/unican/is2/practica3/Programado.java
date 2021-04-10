@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 public class Programado extends AlarmasState {
 	
-	private static Timer timerProgramadoSonando;
+	private static Timer timerProgramadoSonando;  // Timer para planificar tareas temporizadas ProgramadoSonandoTask
 	private static ProgramadoSonandoTask programadoSonandoTask;
 	
 	public void borraAlarma (Alarmas context, String id) {
@@ -15,14 +15,21 @@ public class Programado extends AlarmasState {
 	
 	public void nuevaAlarma (Alarmas context, String id, Date hora) {
 		context.anhadeAlarma(id, hora);
+		
+		// Si la alarma anhadida está situada a la cabeza de la cola de prioridad (es la más próxima)
+		// se reprograma el timer para que suene a la hora correspondiente a dicha alarma
 		if (id.equals(context.alarmaMasProxima().getId())) {
 			timerProgramadoSonando.schedule(programadoSonandoTask, context.alarmaMasProxima().getHora());
 		}
 	}
 	
 	public void alarmaOn (Alarmas context, String id) {
+		// Obtiene la alarma a partir del mapa de alarmas del sistema y la activa
 		Alarma alarma = context.alarma(id);
 		context.activaAlarma(alarma);
+		
+		// Si la alarma activada esta situada a la cabeza de la cola de prioridad (es la más proxima)
+		// se reprograma el timer para que suene a la hora correspondiente a dicha alarma
 		if (id.equals(context.alarmaMasProxima().getId())) {
 			programadoSonandoTask = new ProgramadoSonandoTask(context);
 			timerProgramadoSonando.schedule(programadoSonandoTask, context.alarmaMasProxima().getHora());
@@ -30,10 +37,17 @@ public class Programado extends AlarmasState {
 	}
 	
 	public void alarmaOff (Alarmas context, String id) {
+		// Comprueba, mediante comparacion de id, si la alarma a desactivar se corresponde con la
+		// alarma situada a la cabeza de la cola de prioridad (la mas proxima)
 		boolean reschedule = id.equals(context.alarmaMasProxima().getId());
+		
+		// Obtiene la alarma a partir del mapa de alarmas del sistema y la desactiva
 		Alarma alarma = context.alarma(id);
 		context.desactivaAlarma(alarma);
-		if (reschedule) {
+		
+		// Si la alarma desactivada era la mas proxima, se cancela la tarea temporizada y se 
+		// reprograma el timer para que suene a la hora correspondiente a la nueva alarma mas proxima
+		if (reschedule && context.alarmaMasProxima() != null) {
 			programadoSonandoTask.cancel();
 			programadoSonandoTask = new ProgramadoSonandoTask(context);
 			timerProgramadoSonando.schedule(programadoSonandoTask, context.alarmaMasProxima().getHora());
@@ -41,13 +55,21 @@ public class Programado extends AlarmasState {
 	}
 	
 	public void entryAction (Alarmas context) {
+		// Al entrar al estado Programado, se inicializan tanto timer como tarea temporizada
 		timerProgramadoSonando = new Timer();
 		programadoSonandoTask = new ProgramadoSonandoTask(context);
+		
+		// Si la cola de alarmas activadas no se encuentra vacia en el momento en el que se entra en este
+		// estado, se programa el timer para que suene a la hora correspondiente a la alarma mas proxima
 		if (context.alarmaMasProxima() != null) {
 			timerProgramadoSonando.schedule(programadoSonandoTask, context.alarmaMasProxima().getHora());
 		}
 	}
 	
+	/**
+	 * Tarea temporizada que realiza la transicion desde el estado Programado al estado Sonando cuando la
+	 * hora actual se corresponde con la de la alarma mas proxima de la cola de activadas
+	 */
 	public class ProgramadoSonandoTask extends TimerTask {
 		
 		private Alarmas context;
