@@ -88,7 +88,7 @@ public class InterfazGrafica {
 				// para crear una nueva alarma
 				String id = fieldId.getText();
 				Date hora = (Date) spinnerHora.getValue();
-				try {
+				//try {
 					alarmas.nuevaAlarma(id, hora);
 					
 					// Si la alarma creada no se encuentra ya en la lista de activadas, se anhade al 
@@ -97,7 +97,9 @@ public class InterfazGrafica {
 						modeloActivadas.addElement(id);
 						alarmasActivadas.setModel(modeloActivadas);
 					}
-				} catch (IllegalStateException ex) {}
+				/*} catch (IllegalStateException ex) {
+					System.out.println("monkaS");
+				}*/
 			}
 		});
 		btnNueva.setBounds(21, 115, 158, 23);
@@ -220,7 +222,7 @@ public class InterfazGrafica {
 		JLabel lblConsola = new JLabel("Consola");
 		lblConsola.setBounds(23, 203, 80, 14);
 		frame.getContentPane().add(lblConsola);
-		redirectSystemStreams();
+		//redirectSystemStreams();
 	}
 	
 	private void updateTextArea(final String text) {

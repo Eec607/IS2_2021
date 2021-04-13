@@ -10,7 +10,7 @@ public class Desprogramado extends AlarmasState {
 	
 	public void nuevaAlarma (Alarmas context, String id, Date hora) {
 		context.setState(getEstadoProgramado());
-		getEstadoProgramado().entryAction(context);
+		getEstadoProgramado().entryAction(context, "Desprogramado");
 		getEstadoProgramado().doAction(context);
 		getEstadoProgramado().nuevaAlarma(context, id, hora);
 	}

@@ -55,7 +55,7 @@ public class Sonando extends AlarmasState {
 		// Tarea que se ejecuta cuando se cumple el delay indicado en INTERVALO_SONAR
 		public void run() {
 			getEstadoSonando().exitAction(context);
-			getEstadoProgramado().entryAction(context);
+			getEstadoProgramado().entryAction(context, "Sonando");
 			getEstadoProgramado().doAction(context);
 			context.setState(getEstadoProgramado());
 		}
