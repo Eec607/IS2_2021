@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
 
 public class Alarmas {
 	
-	protected static final int INTERVALO_SONAR = 10000;		// Intervalo en ms que debe "sonar" una alarma
+	protected static final int INTERVALO_SONAR = 1000;		// Intervalo en ms que debe "sonar" una alarma
 	private AlarmasState state;
 	private Map<String, Alarma> alarmasSistema = new HashMap<String, Alarma>();
 	private PriorityQueue<Alarma> alarmasActivadas = new PriorityQueue<Alarma>();

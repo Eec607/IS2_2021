@@ -9,11 +9,18 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
+
 import java.util.Date;
 import java.util.Calendar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import javax.swing.JList;
 import javax.swing.DefaultListModel;
 
@@ -27,6 +34,7 @@ public class InterfazGrafica {
 	private DefaultListModel<String> modeloDesactivadas;
 	private JList<String> alarmasActivadas;
 	private DefaultListModel<String> modeloActivadas;
+	private final JTextArea areaSonando;
 
 	/**
 	 * Launch the application.
@@ -48,6 +56,7 @@ public class InterfazGrafica {
 	 * Create the application.
 	 */
 	public InterfazGrafica() {
+		this.areaSonando = new JTextArea();
 		initialize();
 	}
 
@@ -56,6 +65,7 @@ public class InterfazGrafica {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setBounds(100, 100, 450, 430);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -78,17 +88,19 @@ public class InterfazGrafica {
 				// para crear una nueva alarma
 				String id = fieldId.getText();
 				Date hora = (Date) spinnerHora.getValue();
-				alarmas.nuevaAlarma(id, hora);
-				
-				// Si la alarma creada no se encuentra ya en la lista de activadas, se anhade al 
-				// modelo de dicha lista y se refresca para que los cambios se vean en la gui
-				if (!(modeloActivadas.contains(id) || modeloDesactivadas.contains(id))) {
-					modeloActivadas.addElement(id);
-					alarmasActivadas.setModel(modeloActivadas);
-				}
+				try {
+					alarmas.nuevaAlarma(id, hora);
+					
+					// Si la alarma creada no se encuentra ya en la lista de activadas, se anhade al 
+					// modelo de dicha lista y se refresca para que los cambios se vean en la gui
+					if (!(modeloActivadas.contains(id) || modeloDesactivadas.contains(id))) {
+						modeloActivadas.addElement(id);
+						alarmasActivadas.setModel(modeloActivadas);
+					}
+				} catch (IllegalStateException ex) {}
 			}
 		});
-		btnNueva.setBounds(21, 115, 148, 23);
+		btnNueva.setBounds(21, 115, 158, 23);
 		frame.getContentPane().add(btnNueva);
 		
 		JButton btnApagar = new JButton("APAGAR");
@@ -101,7 +113,7 @@ public class InterfazGrafica {
 				}
 			}
 		});
-		btnApagar.setBounds(39, 149, 112, 40);
+		btnApagar.setBounds(39, 149, 118, 40);
 		frame.getContentPane().add(btnApagar);
 		
 		JButton btnEliminar = new JButton("ELIMINAR");
@@ -126,16 +138,18 @@ public class InterfazGrafica {
 		btnOn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String idAlarma = alarmasDesactivadas.getSelectedValue();
-				
-				// Control de errores: No permite activar alarmas que se encuentren ya en la lista de activadas
-				if (!modeloActivadas.contains(idAlarma)) {
-					alarmas.alarmaOn(idAlarma);
-					modeloActivadas.addElement(idAlarma);
-					modeloDesactivadas.removeElement(idAlarma);
-					alarmasActivadas.setModel(modeloActivadas);
-					alarmasDesactivadas.setModel(modeloDesactivadas);
-				}
+				try {
+					String idAlarma = alarmasDesactivadas.getSelectedValue();
+					
+					// Control de errores: No permite activar alarmas que se encuentren ya en la lista de activadas
+					if (!modeloActivadas.contains(idAlarma)) {
+						alarmas.alarmaOn(idAlarma);
+						modeloActivadas.addElement(idAlarma);
+						modeloDesactivadas.removeElement(idAlarma);
+						alarmasActivadas.setModel(modeloActivadas);
+						alarmasDesactivadas.setModel(modeloDesactivadas);
+					}
+				} catch (NullPointerException ex) {}
 			}
 		});
 		btnOn.setBounds(267, 323, 58, 23);
@@ -145,16 +159,17 @@ public class InterfazGrafica {
 		btnOff.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String idAlarma = alarmasActivadas.getSelectedValue();
-				
-				// Control de errores: No permite desactivar alarmas que se encuentren ya en la lista de desactivadas
-				if (!modeloDesactivadas.contains(idAlarma)) {
-					alarmas.alarmaOff(idAlarma);
-					modeloDesactivadas.addElement(idAlarma);
-					modeloActivadas.removeElement(idAlarma);
-					alarmasDesactivadas.setModel(modeloDesactivadas);
-					alarmasActivadas.setModel(modeloActivadas);
-				}
+				try {
+					String idAlarma = alarmasActivadas.getSelectedValue();	
+					// Control de errores: No permite desactivar alarmas que se encuentren ya en la lista de desactivadas
+					if (!modeloDesactivadas.contains(idAlarma)) {
+						alarmas.alarmaOff(idAlarma);
+						modeloDesactivadas.addElement(idAlarma);
+						modeloActivadas.removeElement(idAlarma);
+						alarmasDesactivadas.setModel(modeloDesactivadas);
+						alarmasActivadas.setModel(modeloActivadas);
+					}
+				} catch (NullPointerException ex) {}	
 			}
 		});
 		btnOff.setBounds(349, 323, 58, 23);
@@ -165,11 +180,11 @@ public class InterfazGrafica {
 		frame.getContentPane().add(lblId);
 		
 		JLabel lblHora = new JLabel("Hora Alarma");
-		lblHora.setBounds(21, 90, 68, 14);
+		lblHora.setBounds(21, 90, 80, 14);
 		frame.getContentPane().add(lblHora);
 		
 		fieldId = new JTextField();
-		fieldId.setBounds(89, 53, 80, 20);
+		fieldId.setBounds(99, 53, 80, 20);
 		frame.getContentPane().add(fieldId);
 		fieldId.setColumns(10);
 		
@@ -186,7 +201,55 @@ public class InterfazGrafica {
 		spinnerHora.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY));
 		spinnerHora.setEditor(new JSpinner.DateEditor(spinnerHora, "HH:mm"));
 		
-		spinnerHora.setBounds(89, 87, 80, 20);
+		spinnerHora.setBounds(99, 87, 80, 20);
 		frame.getContentPane().add(spinnerHora);
+		
+		areaSonando.setBounds(21, 217, 199, 96);
+		frame.getContentPane().add(areaSonando);
+		
+		JButton btnClear = new JButton("CLEAR");
+		btnClear.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				areaSonando.selectAll();
+				areaSonando.replaceSelection("");
+			}
+		});
+		btnClear.setBounds(21, 323, 199, 23);
+		frame.getContentPane().add(btnClear);
+		
+		JLabel lblConsola = new JLabel("Consola");
+		lblConsola.setBounds(23, 203, 80, 14);
+		frame.getContentPane().add(lblConsola);
+		redirectSystemStreams();
+	}
+	
+	private void updateTextArea(final String text) {
+	    SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+	        areaSonando.append(text);
+	      }
+	    });
+	}
+	
+	private void redirectSystemStreams() {
+	    OutputStream out = new OutputStream() {
+	      @Override
+	      public void write(int b) throws IOException {
+	        updateTextArea(String.valueOf((char) b));
+	      }
+
+	      @Override
+	      public void write(byte[] b, int off, int len) throws IOException {
+	        updateTextArea(new String(b, off, len));
+	      }
+
+	      @Override
+	      public void write(byte[] b) throws IOException {
+	        write(b, 0, b.length);
+	      }
+	    };
+
+	    System.setOut(new PrintStream(out, true));
+	    System.setErr(new PrintStream(out, true));
 	}
 }
