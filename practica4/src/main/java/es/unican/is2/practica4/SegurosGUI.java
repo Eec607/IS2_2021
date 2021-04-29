@@ -82,11 +82,15 @@ public class SegurosGUI extends JFrame {
 					int potencia = Integer.parseInt(txtPotencia.getText());
 			    	Cobertura cobertura = Cobertura.valueOf(comboCobertura.getSelectedItem().toString());
 			    	Seguro seguro = new Seguro(potencia, new Cliente("Pepe", "12345678A", minusvalia), cobertura);
+			    	seguro.setFechaUltimoSiniestro(fechaUltimoSiniestro);
 			    	precio = seguro.precio();
 			    	txtPrecio.setText(Double.toString(precio));
-			    	
+				
 				} catch (DatoIncorrectoException e) {
 					txtPrecio.setText(Double.toString(precio));
+					
+				} catch (NumberFormatException e) {
+					txtPrecio.setText("Potencia introducida no válida");
 					
 				} catch (DateTimeParseException e) {
 					txtPrecio.setText("La fecha no se pudo parsear");
@@ -103,6 +107,7 @@ public class SegurosGUI extends JFrame {
 		contentPane.add(btnMinusvalia);
 		
 		comboCobertura = new JComboBox();
+		comboCobertura.setName("comboCobertura");
 		comboCobertura.setModel(new DefaultComboBoxModel(new String[] {"TODO_RIESGO", "TERCEROS_LUNAS", "TERCEROS"}));
 		comboCobertura.setBounds(124, 44, 188, 23);
 		contentPane.add(comboCobertura);
