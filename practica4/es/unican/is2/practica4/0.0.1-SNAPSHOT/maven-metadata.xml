@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>es.unican.is2</groupId>
+  <artifactId>practica4</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20210508.160713</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20210508160713</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>0.0.1-20210508.160713-1</value>
+        <updated>20210508160713</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>0.0.1-20210508.160713-1</value>
+        <updated>20210508160713</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
